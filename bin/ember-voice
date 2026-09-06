@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# ember-voice — talk to Ember. Local Whisper -> your `claude` CLI -> Piper TTS,
+# with the Ember presence reacting throughout. Just run it and speak.
+set -euo pipefail
+DATA="$HOME/.local/share/ember-voice"
+PY="$DATA/venv/bin/python"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+[ -x "$PY" ] || { echo "ember-voice: run the voice setup first (voice/setup.sh)"; exit 1; }
+exec "$PY" "$HERE/../voice/assistant.py" "$@"

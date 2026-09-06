@@ -69,6 +69,29 @@ ember listening 0.3     # a gentle swell
 And Ember never just loops: **thinking evolves** — the churn wanders and it has
 occasional "insight" surges — so it reads as genuine effort, not a spinner.
 
+### Talk to it — the Ember voice assistant
+
+`ember-voice` is a hands-free voice assistant that drives Ember: your voice →
+local **Whisper** (speech-to-text) → your logged-in **`claude` CLI** (the brain,
+no API key) → local **Piper** (text-to-speech) → speakers. Ember *listens*,
+*thinks*, and *talks back* the whole way.
+
+One-time setup (a Python venv — no sudo, all free/open-source):
+
+```bash
+~/code/ember/voice/setup.sh     # installs faster-whisper + piper, downloads a voice
+```
+
+Then just talk:
+
+```bash
+ember-voice        # speak, pause when you're done, and it answers out loud
+```
+
+Pick a different voice with `EMBER_VOICE=en_GB-alan-medium ember-voice`
+(any [Piper voice](https://huggingface.co/rhasspy/piper-voices)), or a bigger
+ear with `EMBER_WHISPER=small.en`.
+
 ### Wire it into Claude Code
 
 Make Ember react to your actual agent by adding hooks to
