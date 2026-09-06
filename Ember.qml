@@ -23,11 +23,18 @@ Item {
     property string presence: "idle"
     readonly property var valid: ["idle", "listening", "thinking", "speaking", "alert"]
 
+    property real targetLevel: 0   // live audio level 0..1 (optional 2nd token)
+
     function applyState(raw) {
-        var s = String(raw || "").trim().toLowerCase()
+        var parts = String(raw || "").trim().toLowerCase().split(/\s+/)
+        var s = parts[0]
         if (s === "" || root.valid.indexOf(s) < 0) return
         root.presence = s
-        if (s === "alert") alertTimer.restart()   // notifications settle back to idle
+        var lv = parts.length > 1 ? parseFloat(parts[1]) : 0
+        if (isNaN(lv)) lv = 0
+        root.targetLevel = Math.max(0, Math.min(1, lv))
+        if (parts.length > 1) levelDecay.restart()   // if the audio feed stops, fall to 0
+        if (s === "alert") alertTimer.restart()       // notifications settle back to idle
     }
 
     FileView {
@@ -42,6 +49,12 @@ Item {
         id: alertTimer
         interval: 4200
         onTriggered: if (root.presence === "alert") root.presence = "idle"
+    }
+
+    Timer {
+        id: levelDecay
+        interval: 350
+        onTriggered: root.targetLevel = 0
     }
 
     // one small overlay window per screen
@@ -66,6 +79,7 @@ Item {
             EmberScene {
                 anchors.fill: parent
                 presence: root.presence
+                inLevel: root.targetLevel
             }
         }
     }

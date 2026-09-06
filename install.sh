@@ -11,7 +11,8 @@ echo "linked $DEST -> $SRC"
 
 mkdir -p "$HOME/.local/bin"
 ln -sfn "$SRC/bin/ember" "$HOME/.local/bin/ember"
-echo "linked ember CLI -> ~/.local/bin/ember"
+ln -sfn "$SRC/bin/ember-audio" "$HOME/.local/bin/ember-audio"
+echo "linked ember + ember-audio CLIs -> ~/.local/bin/"
 
 mkdir -p "${XDG_RUNTIME_DIR:-/tmp}/ember"
 printf 'idle\n' > "${XDG_RUNTIME_DIR:-/tmp}/ember/state"

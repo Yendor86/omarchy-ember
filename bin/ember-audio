@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+"""ember-audio — feed live audio levels to Ember so it reacts to real voice.
+
+  ember-audio out   # what's PLAYING (TTS) -> Ember 'speaking' pulses with the voice
+  ember-audio in    # your MIC           -> Ember 'listening' swells when you speak
+
+Runs until you Ctrl-C it. When it's quiet for a moment, Ember rests (idle);
+when sound returns, it comes alive again. Pairs well with Whisper/Piper/any
+TTS or voice assistant — start it alongside your voice session.
+"""
+import sys, os, subprocess, math, time, array
+
+mode = (sys.argv[1] if len(sys.argv) > 1 else "out").lower()
+if mode in ("-h", "--help"):
+    print(__doc__); sys.exit(0)
+state = "speaking" if mode == "out" else "listening"
+
+runtime = os.environ.get("XDG_RUNTIME_DIR", "/tmp")
+statedir = os.path.join(runtime, "ember"); os.makedirs(statedir, exist_ok=True)
+statefile = os.path.join(statedir, "state")
+
+def sh(cmd):
+    return subprocess.run(cmd, capture_output=True, text=True).stdout.strip()
+
+if mode == "out":
+    dev = sh(["pactl", "get-default-sink"]) + ".monitor"
+else:
+    dev = sh(["pactl", "get-default-source"])
+if dev in ("", ".monitor"):
+    print("ember-audio: could not find a default audio device", file=sys.stderr); sys.exit(1)
+
+RATE = 16000
+proc = subprocess.Popen(
+    ["parec", "-d", dev, "--format=s16le", f"--rate={RATE}", "--channels=1", "--latency-msec=30"],
+    stdout=subprocess.PIPE)
+
+CHUNK = int(RATE * 0.05)            # 50 ms
+BYTES = CHUNK * 2
+GATE = 0.012                        # noise floor
+lvl = 0.0
+resting = False
+silent_since = time.time()
+last_write = 0.0
+
+def write(line):
+    with open(statefile, "w") as f:
+        f.write(line + "\n")
+
+try:
+    while True:
+        raw = proc.stdout.read(BYTES)
+        if not raw:
+            break
+        if len(raw) < BYTES:
+            continue
+        a = array.array('h'); a.frombytes(raw)
+        s = 0
+        for v in a:
+            s += v * v
+        rms = math.sqrt(s / len(a)) / 32768.0
+        x = max(0.0, rms - GATE) * 6.0
+        x = min(1.0, x ** 0.6)         # perceptual curve
+        k = 0.6 if x > lvl else 0.25   # fast attack, gentle release
+        lvl += (x - lvl) * k
+
+        now = time.time()
+        if lvl > 0.02:
+            silent_since = now
+            resting = False
+        if now - silent_since > 1.2:
+            if not resting:
+                write("idle"); resting = True
+        elif now - last_write >= 0.066:    # ~15 Hz
+            write(f"{state} {lvl:.3f}")
+            last_write = now
+except KeyboardInterrupt:
+    pass
+finally:
+    proc.terminate()
+    try: write("idle")
+    except Exception: pass

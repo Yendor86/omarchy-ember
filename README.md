@@ -47,6 +47,28 @@ Under the hood the CLI just writes one word to
 `$XDG_RUNTIME_DIR/ember/state`, which the plugin watches. Anything that can
 write a file can move Ember.
 
+### Voice — make it hear you and talk back
+
+Ember can react to **real audio**, so it feels alive in a voice conversation
+(Whisper, Piper, any TTS/assistant). Run the audio bridge:
+
+```bash
+ember-audio out   # what's PLAYING (TTS) -> Ember 'speaking' ripples pulse with the voice
+ember-audio in    # your MIC            -> Ember 'listening' swells when you speak
+```
+
+It reads PipeWire levels and drives Ember ~15×/sec; when it goes quiet, Ember
+rests, and when sound returns it comes alive again. You can also drive the level
+yourself — the state accepts an optional `0..1`:
+
+```bash
+ember speaking 0.8      # a strong pulse
+ember listening 0.3     # a gentle swell
+```
+
+And Ember never just loops: **thinking evolves** — the churn wanders and it has
+occasional "insight" surges — so it reads as genuine effort, not a spinner.
+
 ### Wire it into Claude Code
 
 Make Ember react to your actual agent by adding hooks to

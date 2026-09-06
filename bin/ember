@@ -1,20 +1,23 @@
 #!/usr/bin/env bash
-# ember — tell the desktop presence what's happening.
-#   ember thinking   ember speaking   ember listening   ember alert   ember idle
-#   ember status     -> prints current state
+# ember — tell the desktop presence what's happening (optionally how strongly).
+#   ember thinking            ember speaking            ember listening
+#   ember speaking 0.8        # with an audio level 0..1 (the ember reacts to it)
+#   ember alert               ember idle
+#   ember status              # print current state
+# For live voice reactivity, run:  ember-audio out   (or: ember-audio in)
 set -euo pipefail
 dir="${XDG_RUNTIME_DIR:-/tmp}/ember"
 mkdir -p "$dir"
 state="${1:-idle}"
+level="${2:-}"
 case "$state" in
-  idle|listening|thinking|speaking|alert)
-    printf '%s\n' "$state" > "$dir/state" ;;
-  status)
-    cat "$dir/state" 2>/dev/null || echo idle ;;
-  -h|--help|help)
-    grep '^#' "$0" | sed 's/^# \{0,1\}//' ; exit 0 ;;
-  *)
-    echo "ember: unknown state '$state'" >&2
-    echo "try: idle | listening | thinking | speaking | alert | status" >&2
-    exit 1 ;;
+  idle|listening|thinking|speaking|alert) ;;
+  status) cat "$dir/state" 2>/dev/null || echo idle; exit 0 ;;
+  -h|--help|help) grep '^#' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  *) echo "ember: unknown state '$state' (idle|listening|thinking|speaking|alert)" >&2; exit 1 ;;
 esac
+if [ -n "$level" ]; then
+  printf '%s %s\n' "$state" "$level" > "$dir/state"
+else
+  printf '%s\n' "$state" > "$dir/state"
+fi
