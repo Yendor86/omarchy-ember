@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "yendor.ember",
+  "name": "Ember",
+  "version": "0.1.0",
+  "author": "Rodney Baker",
+  "license": "MIT",
+  "description": "A warm, living AI presence for your desktop. Ember sits quietly in the corner and breathes; when an agent is listening, thinking, speaking, or finishes a job in the background, it stirs, churns, and glows. Not a face — a presence. Any tool can drive it with one line: `ember thinking`.",
+  "kinds": ["service"],
+  "entryPoints": { "service": "Ember.qml" }
+}
