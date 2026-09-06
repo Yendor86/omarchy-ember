@@ -112,18 +112,25 @@ terminal is off-screen.
 
 ## Configure
 
-Open `Ember.qml` and edit the properties at the top (the shell hot-reloads on
-save — no restart):
+Ember **follows the monitor you're working on** — one presence, and it hops to
+whichever screen has focus.
 
-| Property      | Default | Meaning                                  |
-|---------------|---------|------------------------------------------|
-| `boxSize`     | `260`   | Ember's size in px                       |
-| `marginX/Y`   | `26`    | Gap from the screen edge                 |
-| `everyScreen` | `true`  | `false` = primary monitor only           |
+**Move it:** grab the ember (the glowing centre is a drag handle) and drop it
+anywhere; the rest of its area stays click-through so it never gets in your way.
+Its spot is remembered in `~/.config/ember/pos`.
 
-To move it to a different corner, change the `anchors` in the `PanelWindow`
-(e.g. `left: true; top: true`). To sit it *behind* windows on the wallpaper,
-change `WlrLayer.Top` to `WlrLayer.Bottom`.
+For anything else, edit the properties at the top of `Ember.qml` (the shell
+hot-reloads on save — no restart):
+
+| Property   | Default | Meaning                                   |
+|------------|---------|-------------------------------------------|
+| `boxSize`  | `320`   | Ember's size in px (transparent window)   |
+| `handle`   | `150`   | size of the central drag area             |
+| `draggable`| `true`  | set `false` to lock it in place           |
+| `mRight` / `mBottom` | `26` | starting offset from the bottom-right corner |
+
+To sit it *behind* windows on the wallpaper, change `WlrLayer.Top` to
+`WlrLayer.Bottom`.
 
 ## States
 

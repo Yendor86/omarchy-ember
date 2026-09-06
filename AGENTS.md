@@ -16,6 +16,10 @@ presence" on the desktop and reacts to agent activity.
   (RMS computed by hand; py3.14 has no audioop) and feeds `<state> <level>` at
   ~15Hz; rests to idle on silence. speaking/listening are audio-reactive;
   thinking evolves (wandering churn + insight surges), never a fixed loop.
+- **Placement:** one instance that follows `Hyprland.focusedMonitor` (not per-screen).
+  Bottom-right corner by default; draggable via a central handle (mask = center box,
+  rest click-through); position persisted to `~/.config/ember/pos` (mRight mBottom, logical
+  px). Monitor logical size = Hyprland monitor width/height ÷ scale.
 - **Design language:** warm only (ember/amber/coral on transparent), never cold.
   States differ by motion + brightness, not hue. It is a presence, not a face.
 - **Hot reload:** saving any file under the plugin dir reloads it; use
