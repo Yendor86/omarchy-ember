@@ -58,7 +58,7 @@ Item {
         id: cv
         anchors.fill: parent
         renderStrategy: Canvas.Cooperative
-        renderTarget: Canvas.FramebufferObject
+        renderTarget: Canvas.Image
 
         onPaint: {
             var ctx = cv.getContext("2d")
@@ -72,7 +72,7 @@ Item {
             for (var key in tgt) P[key] = scene.lerp(P[key], tgt[key], k)
 
             var cx = W / 2, cy = H / 2
-            var R = Math.max(40, Math.min(W, H) * 0.24)
+            var R = Math.max(40, Math.min(W, H) * 0.16)
 
             // breathing + flicker
             var breath = Math.sin(t * P.breath * 2 * Math.PI * 0.16) * P.breathAmp

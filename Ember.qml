@@ -12,7 +12,7 @@ Item {
     id: root
 
     // ---- config (edit + save; the shell hot-reloads) ----
-    property int  boxSize:  260   // width & height of Ember's little window
+    property int  boxSize:  320   // width & height of Ember's little window
     property int  marginX:  26    // gap from screen edge
     property int  marginY:  26
     property bool everyScreen: true   // false = primary screen only
